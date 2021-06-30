@@ -1,4 +1,5 @@
 ﻿using ASP.NETCoreAPI.DAL;
+using ASP.NETCoreAPI.Models;
 using ASP.NETCoreAPI.Services.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,7 +15,7 @@ namespace ASP.NETCoreAPI.Services.Repository
           where T : class
     {
 
-        protected readonly AppDbContext _context;
+        protected readonly  AppDbContext _context;
         private bool disposed = false;
 
         public Repository(AppDbContext context)
@@ -50,6 +51,8 @@ namespace ASP.NETCoreAPI.Services.Repository
         public IEnumerable<T> GetAll()
         {
             IEnumerable<T> entityList = _context.Set<T>().ToList();
+            //IEnumerable<T> entityList = Enumerable.Empty<T>();
+
             return entityList;
         }
 

@@ -1,7 +1,11 @@
+using ASP.NETCoreAPI.DAL;
+using ASP.NETCoreAPI.Services.IRepository;
+using ASP.NETCoreAPI.Services.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +36,15 @@ namespace ASP.NETCoreAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NETCoreAPI", Version = "v1" });
             });
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("APIDBConnection"));
+            });
+
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IBusinessUnitRepository, BusinessUnitRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +56,7 @@ namespace ASP.NETCoreAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP.NETCoreAPI v1"));
             }
-
+          
             app.UseHttpsRedirection();
 
             app.UseRouting();

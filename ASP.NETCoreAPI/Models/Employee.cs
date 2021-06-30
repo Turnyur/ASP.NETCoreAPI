@@ -12,5 +12,10 @@ namespace ASP.NETCoreAPI.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; }
+
+
+
+        public int BusinessUnitId { get; set; }
+        public BusinessUnit BusinessUnit { get; set; }
     }
 }
