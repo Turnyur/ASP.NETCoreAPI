@@ -23,41 +23,56 @@ namespace ASP.NETCoreAPI.Controllers
 
         // GET: api/<DepartmentController>
         [HttpGet]
-        public IEnumerable<Department> Get()
+        public IActionResult Get()
         {
-           
-
             IEnumerable<Department> deptList = _departmentRepository.GetAll();
             if (deptList == null)
             {
-               return Enumerable.Empty<Department>();
+                return NotFound();
             }
             else
             {
-                return deptList;
+                return Ok(deptList);
             }
 
         }
 
-        // GET api/<DepartmentController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{Id}")]
+        public IActionResult Get(int? Id)
         {
-            return "value";
+            if (Id != null)
+            {
+                Department department = _departmentRepository.GetById((int)Id);
+                if (department == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(department);
+                }
+
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
+
 
         // POST api/<DepartmentController>
         [HttpPost]
-        public bool Post([FromBody] Department department)
+        public IActionResult Post([FromBody] Department department)
         {
             if (ModelState.IsValid)
             {
                 _departmentRepository.Insert(department);
-                return true;
+                return CreatedAtAction("GET", new { Id = department.Id }, department);
             }
             else
             {
-                return false;
+                return BadRequest(ModelState);
             }
 
 
@@ -66,22 +81,56 @@ namespace ASP.NETCoreAPI.Controllers
 
         // PUT api/<DepartmentController>/5
         [HttpPut]
-        public IActionResult updateEmployee([FromBody] Department department)
+        public IActionResult Put([FromBody] Department department)
         {
             if (ModelState.IsValid)
             {
-                _departmentRepository.Update(department);
-                return StatusCode(200);
+                Department _dept = _departmentRepository.GetById(department.Id);
+                if (_dept != null)
+                {
+                    _departmentRepository.Update(department);
+
+                    return Ok(department);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
             }
             else
+            {
+                return BadRequest(ModelState);
+            }
 
-                return StatusCode(400);
+
+
         }
+
+
 
         // DELETE api/<DepartmentController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int? Id)
         {
+
+            if (Id != null)
+            {
+                Department department = _departmentRepository.GetById((int)Id);
+                if (department != null)
+                {
+                    _departmentRepository.Delete(department);
+                    return NoContent();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return BadRequest(Id);
+            }
         }
     }
 }

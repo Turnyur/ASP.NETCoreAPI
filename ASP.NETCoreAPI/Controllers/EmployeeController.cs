@@ -57,6 +57,20 @@ namespace ASP.NETCoreAPI.Controllers
 
         }
 
+        [HttpGet("filter-lastname")]
+        public IActionResult SearchByLastName([FromBody] string lastName)
+        {
+
+            Employee employee = _employeeRepository.GetByFilter(e => e.LastName == lastName);
+            if (employee != null)
+            {
+                return Ok(employee);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [HttpPost]
         public IActionResult Post([FromBody] Employee employee)
@@ -75,7 +89,7 @@ namespace ASP.NETCoreAPI.Controllers
            
         }
 
-        [HttpPost]
+        [HttpPut]
         public IActionResult Put([FromBody] Employee employee)
         {
             if (ModelState.IsValid)
@@ -103,25 +117,7 @@ namespace ASP.NETCoreAPI.Controllers
         }
 
 
-
-
-        [HttpGet("filter-lastname")]
-        public IActionResult SearchByLastName([FromBody]string lastName)
-        {
-
-            Employee employee = _employeeRepository.GetByFilter(e=>e.LastName==lastName);
-            if (employee!=null)
-            {
-                return Ok(employee);
-            }
-            else
-            {
-               return NotFound();
-            }
-        } 
-
-        
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int? Id) {
 
             if (Id!=null)

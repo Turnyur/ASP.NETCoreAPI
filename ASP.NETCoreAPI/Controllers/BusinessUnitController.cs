@@ -22,57 +22,113 @@ namespace ASP.NETCoreAPI.Controllers
 
         // GET: api/<BusinessUnitController>
         [HttpGet]
-        public IEnumerable<BusinessUnit> Get()
+        public IActionResult Get()
         {
-
-
-            IEnumerable<BusinessUnit> deptList = _businessUnitRepository.GetAll();
-            if (deptList == null)
+            IEnumerable<BusinessUnit> businesUnitList = _businessUnitRepository.GetAll();
+            if (businesUnitList == null)
             {
-                return Enumerable.Empty<BusinessUnit>();
+                return NotFound();
             }
             else
             {
-                return deptList;
+                return Ok(businesUnitList);
             }
 
         }
+
+        [HttpGet("{Id}")]
+        public IActionResult Get(int? Id)
+        {
+            if (Id != null)
+            {
+                BusinessUnit businesUnit = _businessUnitRepository.GetById((int)Id);
+                if (businesUnit == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(businesUnit);
+                }
+
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+
 
 
 
         // POST api/<BusinessUnitController>
         [HttpPost]
-        public bool Post([FromBody] BusinessUnit businessUnit)
+        public IActionResult Post([FromBody] BusinessUnit businessUnit)
         {
             if (ModelState.IsValid)
             {
                 _businessUnitRepository.Insert(businessUnit);
-                return true;
+                return CreatedAtAction("GET", new { Id = businessUnit.Id }, businessUnit);
             }
             else
             {
-                return false;
+                return BadRequest(ModelState);
+            }
+
+
+
+        }
+        // POST api/<BusinessUnitController>
+
+        [HttpPost]
+        public IActionResult Put([FromBody] BusinessUnit businessUnit)
+        {
+            if (ModelState.IsValid)
+            {
+                BusinessUnit bUnit = _businessUnitRepository.GetById(businessUnit.Id);
+                if (bUnit != null)
+                {
+                    _businessUnitRepository.Update(businessUnit);
+
+                    return Ok(businessUnit);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            else
+            {
+                return BadRequest(ModelState);
             }
 
 
 
         }
 
-
-
-
-        // PUT api/<DepartmentController>/5
-        [HttpPut]
-        public IActionResult updateBusinessUnit([FromBody] BusinessUnit businessUnit)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int? Id)
         {
-            if (ModelState.IsValid)
+
+            if (Id != null)
             {
-                _businessUnitRepository.Update(businessUnit);
-                return StatusCode(200);
+                BusinessUnit businessUnit = _businessUnitRepository.GetById((int)Id);
+                if (businessUnit != null)
+                {
+                    _businessUnitRepository.Delete(businessUnit);
+                    return NoContent();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             else
-
-                return StatusCode(400);
+            {
+                return BadRequest(Id);
+            }
         }
 
 
