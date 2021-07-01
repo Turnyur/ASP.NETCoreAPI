@@ -75,6 +75,9 @@ namespace ASP.NETCoreAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Employee employee)
         {
+            // Reject Id specified by user and auto generate Id
+            employee.Id = 0;
+
             if (ModelState.IsValid)
             {
                 _employeeRepository.Insert(employee);

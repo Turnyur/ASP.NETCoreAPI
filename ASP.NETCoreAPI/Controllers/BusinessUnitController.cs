@@ -66,6 +66,8 @@ namespace ASP.NETCoreAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] BusinessUnit businessUnit)
         {
+            // Reject Id specified by user and auto generate Id
+            businessUnit.Id = 0;
             if (ModelState.IsValid)
             {
                 _businessUnitRepository.Insert(businessUnit);
@@ -81,7 +83,7 @@ namespace ASP.NETCoreAPI.Controllers
         }
         // POST api/<BusinessUnitController>
 
-        [HttpPost]
+        [HttpPut]
         public IActionResult Put([FromBody] BusinessUnit businessUnit)
         {
             if (ModelState.IsValid)

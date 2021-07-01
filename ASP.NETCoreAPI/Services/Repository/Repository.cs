@@ -34,18 +34,30 @@ namespace ASP.NETCoreAPI.Services.Repository
             GC.SuppressFinalize(this);
         }
 
+        /* protected virtual void Dispose(bool disposing)
+         {
+             if (disposed)
+             {
+                 return;
+             }
+
+             if (disposing)
+             {
+                 _context.Dispose();
+                 disposed = true;
+             }
+         } */
+
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (!this.disposed)
             {
-                return;
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
             }
-
-            if (disposing)
-            {
-                _context.Dispose();
-                disposed = true;
-            }
+            this.disposed = true;
         }
 
         public IEnumerable<T> GetAll()
@@ -64,7 +76,10 @@ namespace ASP.NETCoreAPI.Services.Repository
 
         public T GetById(int id)
         {
-            return _context.Find<T>(id);
+            T entity =_context.Set<T>().Find(id);
+            //Always Detach entity from being tracked by context
+            _context.Entry(entity).State = EntityState.Detached;
+            return entity;
         }
 
         public void Insert(T entity)
@@ -78,7 +93,11 @@ namespace ASP.NETCoreAPI.Services.Repository
 
         public void Update(T entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+           
+           // _context.Attach<T>(entity);
+           
+           
+             _context.Entry(entity).State = EntityState.Modified;
             Save();
 
         }

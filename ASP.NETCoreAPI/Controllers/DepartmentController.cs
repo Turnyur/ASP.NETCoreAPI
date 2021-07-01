@@ -16,6 +16,7 @@ namespace ASP.NETCoreAPI.Controllers
     {
 
         private readonly IDepartmentRepository _departmentRepository;
+        
         public DepartmentController(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
@@ -65,10 +66,15 @@ namespace ASP.NETCoreAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Department department)
         {
+
+            // Reject Id specified by user and auto generate Id
+            department.Id = 0;
             if (ModelState.IsValid)
             {
+               
                 _departmentRepository.Insert(department);
-                return CreatedAtAction("GET", new { Id = department.Id }, department);
+              //  return CreatedAtAction("GET", new { Id = department.Id }, department);
+                return CreatedAtAction("GET", department);
             }
             else
             {

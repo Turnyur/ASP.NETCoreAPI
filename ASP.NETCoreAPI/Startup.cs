@@ -42,9 +42,9 @@ namespace ASP.NETCoreAPI
                 options.UseSqlServer(Configuration.GetConnectionString("APIDBConnection"));
             });
 
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IBusinessUnitRepository, BusinessUnitRepository>();
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+            services.AddTransient<IBusinessUnitRepository, BusinessUnitRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
