@@ -20,56 +20,128 @@ namespace ASP.NETCoreAPI.Controllers
             _employeeRepository = employeeRepository;
         }
         [HttpGet]
-        public IEnumerable<Employee> Get()
+        public IActionResult Get()
         {
             IEnumerable<Employee> empList= _employeeRepository.GetAll();
             if (empList==null)
             {
-               return Enumerable.Empty<Employee>();
+                return NotFound();
             }
             else
             {
-                return empList;
+                return Ok(empList);
             }
             
         }
 
+        [HttpGet("{Id}")]
+        public IActionResult Get(int? Id)
+        {
+            if (Id!=null)
+            {
+                Employee employee = _employeeRepository.GetById((int)Id);
+                if (employee == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(employee);
+                }
+
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+
 
         [HttpPost]
-        public bool Post([FromBody] Employee employee)
+        public IActionResult Post([FromBody] Employee employee)
         {
             if (ModelState.IsValid)
             {
                 _employeeRepository.Insert(employee);
-                return true;
+               return CreatedAtAction("GET", new { Id=employee.Id}, employee);
             }
             else
             {
-                return false;
+                return BadRequest(ModelState);
             }
 
 
            
         }
 
-       
-        [HttpGet("search/{lastName}")]
-        public Employee SearchByLastName(string lastName)
-        {
-            return _employeeRepository.GetByFilter(e=>e.LastName==lastName);
-        } 
-
-        [HttpPut]
-        public IActionResult  updateEmployee([FromBody] Employee employee)
+        [HttpPost]
+        public IActionResult Put([FromBody] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _employeeRepository.Update(employee);
-                return StatusCode(200);
+               Employee _employee = _employeeRepository.GetById(employee.Id);
+                if (_employee!=null)
+                {
+                    _employeeRepository.Update(employee);
+
+                    return Ok(employee);
+                }
+                else
+                {
+                    return NotFound();
+                }
+              
             }
             else
+            {
+                return BadRequest(ModelState);
+            }
 
-                return StatusCode(400);
+
+
         }
+
+
+
+
+        [HttpGet("filter-lastname")]
+        public IActionResult SearchByLastName([FromBody]string lastName)
+        {
+
+            Employee employee = _employeeRepository.GetByFilter(e=>e.LastName==lastName);
+            if (employee!=null)
+            {
+                return Ok(employee);
+            }
+            else
+            {
+               return NotFound();
+            }
+        } 
+
+        
+        [HttpDelete]
+        public IActionResult Delete(int? Id) {
+
+            if (Id!=null)
+            {
+                Employee employee = _employeeRepository.GetById((int)Id);
+                if (employee!=null)
+                {
+                    _employeeRepository.Delete(employee);
+                    return NoContent();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return BadRequest(Id);
+            }
+        }
+
     }
 }
