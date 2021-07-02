@@ -1,3 +1,4 @@
+using ASP.NETCoreAPI.Config;
 using ASP.NETCoreAPI.DAL;
 using ASP.NETCoreAPI.Services.IRepository;
 using ASP.NETCoreAPI.Services.Repository;
@@ -41,6 +42,10 @@ namespace ASP.NETCoreAPI
             {
                 options.UseSqlServer(Configuration.GetConnectionString("APIDBConnection"));
             });
+
+            //Get Configuration Settings from appsettings.json
+            var appConfigSettings = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appConfigSettings);
 
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IDepartmentRepository, DepartmentRepository>();
